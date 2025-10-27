@@ -1,0 +1,122 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model name_title {
+  id          Int       @id @default(autoincrement())
+  title_th    String
+  title_en    String?
+  create_by   Int?
+  create_date DateTime? @default(now())
+  update_by   Int?
+  update_date DateTime? @default(now())
+  students    student[]
+  teachers    teacher[]
+}
+
+model student {
+  id                   Int          @id @default(autoincrement())
+  status               String
+  photo                String?
+  title                Int
+  first_name           String
+  last_name            String
+  gender               String?
+  id_card              String?
+  student_id           String?
+  class_level          Int?
+  student_number       String?
+  detail               String?      @db.Text
+  create_by            Int?
+  create_date          DateTime?    @default(now())
+  update_by            Int?
+  update_date          DateTime?    @default(now())
+  class_level_relation class_level? @relation(fields: [class_level], references: [id])
+  title_relation       name_title   @relation(fields: [title], references: [id])
+
+  @@index([class_level], map: "student_class_level_fkey")
+  @@index([title], map: "student_title_fkey")
+}
+
+model teacher {
+  id                   Int          @id @default(autoincrement())
+  status               String
+  photo                String?
+  title                Int
+  first_name           String
+  last_name            String
+  gender               String?
+  id_card              String?
+  class_level          Int?
+  subject              String?
+  phone                String?
+  username             String?      @unique
+  role                 String
+  detail               String?      @db.Text
+  password             String?
+  create_by            Int?
+  create_date          DateTime?    @default(now())
+  update_by            Int?
+  update_date          DateTime?    @default(now())
+  class_level_relation class_level? @relation(fields: [class_level], references: [id])
+  title_relation       name_title   @relation(fields: [title], references: [id])
+
+  @@index([class_level], map: "teacher_class_level_fkey")
+  @@index([title], map: "teacher_title_fkey")
+}
+
+model class_level {
+  id             Int       @id @default(autoincrement())
+  class_level_th String
+  class_level_en String?
+  create_by      Int?
+  create_date    DateTime? @default(now())
+  update_by      Int?
+  update_date    DateTime? @default(now())
+  students       student[]
+  teachers       teacher[]
+}
+
+model time_stat {
+  id              Int       @id @default(autoincrement())
+  date            DateTime
+  class_level     Int
+  teacher_subject Int
+  male_amount     Int
+  female_amount   Int
+  male_come       Int
+  female_come     Int
+  male_not_come   Int
+  female_not_come Int
+  absent          Int
+  sick            Int
+  late            Int
+  remark          String?
+  create_by       Int?
+  create_date     DateTime? @default(now())
+  update_by       Int?
+  update_date     DateTime? @default(now())
+}
+
+model time_stat_detail {
+  id                     Int       @id @default(autoincrement())
+  time_stat_id           Int
+  student_id             Int
+  student_title          Int
+  student_first_name     String
+  student_last_name      String
+  student_gender         String
+  student_class_level    Int
+  student_student_number String
+  remark                 String? //1 ขาด//2 ลา//3 ป่วย//4 มาสาย
+  create_by              Int
+  create_date            DateTime? @default(now())
+  update_by              Int?
+  update_date            DateTime? @default(now())
+}
