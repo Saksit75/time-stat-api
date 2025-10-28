@@ -4,40 +4,62 @@ const getFormTimeStat = async () => {
   try {
     const { students, classLevel } = await statModel.getFormTimeStat();
 
-    const formData = classLevel.reduce((acc, classLev) => {
-      const studentCount = students.filter(s => s.class_level === classLev.id).length;
-      const studentCountMale = students.filter(s => s.class_level === classLev.id && s.gender === 'm').length;
-      const studentCountFemale = students.filter(s => s.class_level === classLev.id && s.gender === 'f').length;
+    const formData = {};
 
-      acc[classLev.id] = {
+    for (const classLev of classLevel) {
+      const studentsInClass = [];
+      let maleCount = 0;
+      let femaleCount = 0;
+
+      // loop แค่ครั้งเดียวสำหรับ students ทุกคน
+      for (const student of students) {
+        if (student.class_level === classLev.id) {
+          // เพิ่ม student ลง studentsByClass
+          studentsInClass.push({
+            id: student.id,
+            student_id: student.student_id,
+            student_number: student.student_number,
+            title: student.title_relation?.title_th || '',
+            first_name: student.first_name,
+            last_name: student.last_name,
+            gender: student.gender,
+            class_status: 'come'
+          });
+
+          // นับ male/female
+          if (student.gender === 'm') maleCount++;
+          else if (student.gender === 'f') femaleCount++;
+        }
+      }
+
+      const totalCount = studentsInClass.length;
+
+      formData[classLev.id] = {
         class_level: classLev.id,
         class_level_th: classLev.class_level_th,
-        amount_student_male: studentCountMale,
-        amount_student_female: studentCountFemale,
-        amount_student_count: studentCount,
-        come_student_male: null,
-        come_student_female: null,
-        come_student_count: null,
-        not_come_student_male: null,
-        not_come_student_female: null,
-        not_come_student_count: null,
-        absent_student_count: null,
-        leave_student: null,
-        sick_student: null,
-        late_student: null,
-        remark: null
+        amount_male: maleCount,
+        amount_female: femaleCount,
+        amount_count: totalCount,
+        come_male: maleCount,
+        come_female: femaleCount,
+        come_count: totalCount,
+        not_come_male: null,
+        not_come_female: null,
+        not_come_count: null,
+        absent: null,
+        leave: null,
+        sick: null,
+        late: null,
+        remark: studentsInClass
       };
+    }
 
-      return acc;
-    }, {});
+    const result = { formTimeStat: { date: new Date(), formData, teacher: null } };
 
-    return {
-      formTimeStat: {
-        date: new Date(),
-        formData,
-        teacher: null
-      }
-    };
+    // 🔹 แสดงผลสวย ๆ
+    console.log(JSON.stringify(result, null, 2));
+
+    return result;
   } catch (error) {
     console.error(error);
     throw error;
