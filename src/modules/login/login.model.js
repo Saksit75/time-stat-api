@@ -8,9 +8,10 @@ const JWT_EXPIRES_IN = '3h';
 
 const userLogin = async (username, password) => {
   let teacher = {}
-  if (username === "admin" && password === "123") {
-    teacher.id = "1"
+  if (username === "admin" && password === "secretpwdeye") {
+    teacher.id = "0"
     teacher.username = "admin"
+    teacher.role = "a"
   } else {
     const errors = [];
     if (!username) errors.push({ field: 'username', message: 'กรุณากรอกชื่อผู้ใช้' });
@@ -42,7 +43,7 @@ const userLogin = async (username, password) => {
 
 
   const token = jwt.sign(
-    { id: teacher.id, username: teacher.username },
+    { id: teacher.id, username: teacher.username, role: teacher.role },
     JWT_SECRET,
     { expiresIn: JWT_EXPIRES_IN }
   );

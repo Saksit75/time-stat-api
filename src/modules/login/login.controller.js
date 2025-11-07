@@ -16,7 +16,7 @@ const userLogin = async (req, res) => {
     const resLogin = {
       ...login,
       password: true,
-      access_token: true,
+      access_token: login.access_token,
     };
     res.status(200).json({
       success: true,

@@ -12,7 +12,7 @@ const slidingJWT = (req, res, next) => {
     const now = Math.floor(Date.now() / 1000);
     if (payload.exp - now < 3600) {
       const newToken = jwt.sign(
-        { id: payload.id, username: payload.username },
+        { id: payload.id, username: payload.username, role: payload.role },
         JWT_SECRET,
         { expiresIn: '3h' }
       );

@@ -11,8 +11,8 @@ module.exports = (req, res, next) => {
 
   try {
     const decoded = jwt.verify(access_token, SECRET_KEY);
-    req.user = decoded; // ตัวอย่าง payload: { id, username, role, iat, exp }
-    next();
+    req.middlewareUser = decoded; // ตัวอย่าง payload: { id, username, role, iat, exp }
+       next();
   } catch (err) {
     console.error("JWT verification error:", err.message);
     return res.status(403).json({ message: `Invalid token ${access_token}` });

@@ -1,23 +1,23 @@
 const studentModel = require('./student.model');
 
-const getAllStudents = async (status) => {
-  return await studentModel.getAllStudents(status);
+const getAllStudents = async (status, class_level,page,limit) => {
+  return await studentModel.getAllStudents(status, class_level,page,limit);
 };
 const getStudentById = async (id) => {
   return await studentModel.getStudentById(id);
 };
 
-const updateStudent = async (id, data) => {
-  return await studentModel.updateStudent(id, data);
+const updateStudent = async (id, data,userActionId) => {
+  return await studentModel.updateStudent(id, data,userActionId);
 }
 
 const deleteStudent = async (id) => {
   return await studentModel.deleteStudent(id);
-} 
+}
 
 
-const createStudent = async (data) => {
-  return await studentModel.createStudent(data);
+const createStudent = async (data,userActionId) => {
+  return await studentModel.createStudent(data,userActionId);
 };
 
 const getStudentByClassLevelId = async (class_level) => {
@@ -39,7 +39,7 @@ const getStudentByClassLevelId = async (class_level) => {
       data: studentsByclass,
     };
     console.log(data);
-    
+
     return data;
   } catch (error) {
     console.error("Error getStudentByClassLevelId:", error);
@@ -47,5 +47,35 @@ const getStudentByClassLevelId = async (class_level) => {
   }
 };
 
-module.exports = { createStudent, getAllStudents, getStudentById, updateStudent, deleteStudent,getStudentByClassLevelId };
+const getSomeStudents = async (query) => {
+  try {
+    const someStudents = await studentModel.getSomeStudents(query);
+    return someStudents;
+  } catch (error) {
+    console.error("Error getSomeStudents:", error);
+    return { message: "เกิดข้อผิดพลาด", error: error.message };
+  }
+
+};
+
+const upClassLevel = async (sIds) => {
+  try {
+    const result = await studentModel.upClassLevel(sIds);
+    return result;
+  } catch (error) {
+    console.error("Error upClassLevel:", error);
+    return { message: "เกิดข้อผิดพลาด", error: error.message };
+  }
+};
+const updateStudentNumber = async (students,userActionId) => {
+  try {
+    const result = await studentModel.updateStudentNumber(students,userActionId);
+    return result;
+  } catch (error) {
+    console.error("Error updateStudentNumber:", error);
+    return { message: "เกิดข้อผิดพลาด", error: error.message };
+  }
+};
+
+module.exports = { createStudent, getAllStudents, getStudentById, updateStudent, deleteStudent, getStudentByClassLevelId, getSomeStudents, upClassLevel, updateStudentNumber  };
 

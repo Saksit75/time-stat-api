@@ -1,11 +1,12 @@
 const studentService = require('./student.service');
 
 const createStudent = async (req, res, next) => {
+  const userActionId = req.middlewareUser.id;
   try {
     if (req.file) {
       req.body.file = req.file; // ส่งทั้ง object ไป model
     }
-    const newStudent = await studentService.createStudent(req.body);
+    const newStudent = await studentService.createStudent(req.body,userActionId);
     res.status(201).json({
       success: true,
       message: 'created successfully',
@@ -19,7 +20,10 @@ const createStudent = async (req, res, next) => {
 const getAllStudents = async (req, res, next) => {
   try {
     const status = req.query.status || null;
-    const students = await studentService.getAllStudents(status);
+    const class_level = Number(req.query.classLevel) || null;
+    const page = Number(req.query.page) || null;
+    const limit = Number(req.query.limit) || null;
+    const students = await studentService.getAllStudents(status,class_level,page,limit);
     res.json({
       success: true,
       data: students
@@ -59,6 +63,7 @@ const getStudentById = async (req, res, next) => {
 };
 
 const updateStudent = async (req, res, next) => {
+  const userActionId = req.middlewareUser.id;
   try {
     const id = parseInt(req.params.id);
 
@@ -74,7 +79,7 @@ const updateStudent = async (req, res, next) => {
       updateStudent.file = req.file; // ส่งทั้ง object ไป model
     }
 
-    const student = await studentService.updateStudent(id, updateStudent);
+    const student = await studentService.updateStudent(id, updateStudent,userActionId);
 
     res.json({
       success: true,
@@ -109,7 +114,7 @@ const deleteStudent = async (req, res, next) => {
 
 const getStudentByClassLevelId = async (req, res, next) => {
   try {
-     const classLevelId = parseInt(req.params.id);
+    const classLevelId = parseInt(req.params.id);
 
     if (isNaN(classLevelId)) {
       return res.status(400).json({
@@ -129,11 +134,65 @@ const getStudentByClassLevelId = async (req, res, next) => {
   }
 };
 
+const getSomeStudents = async (req, res, next) => {
+  try {
+    const query = req.query.q || null;
+    const students = await studentService.getSomeStudents(query);
+    res.json({
+      success: true,
+      data: students
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+const upClassLevel = async (req, res, next) => {
+  try {
+     const sIds = Array.isArray(req.body.sIds) ? req.body.sIds : [];
+
+
+    console.log("sIds:", sIds);
+
+    const result = await studentService.upClassLevel(sIds);
+
+    return res.json({
+      success: true,
+      message: "เลื่อนชั้นเรียบร้อย",
+      data: result,
+    });
+
+  } catch (err) {
+    next(err);
+  }
+};
+
+const updateStudentNumber = async (req, res, next) => {
+  const userActionId = req.middlewareUser.id;
+  const students = req.body
+  console.log("data : ", req.body);
+  // return;
+  try {
+    
+    const result = await studentService.updateStudentNumber(students,userActionId);
+    return res.json({
+      success: true,
+      message: "เลื่อนชั้นเรียบร้อย",
+      data: result,
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+
+
 module.exports = {
   createStudent,
   getAllStudents,
   getStudentById,
   updateStudent,
   deleteStudent,
-  getStudentByClassLevelId
+  getStudentByClassLevelId,
+  getSomeStudents,
+  upClassLevel,
+  updateStudentNumber
 };

@@ -1,6 +1,7 @@
 const teacherService = require('./teacher.service');
 
 const createTeacher = async (req, res, next) => {
+  const userActionId = req.middlewareUser.id;
   try {
 
     const newTeacherData = req.body;
@@ -8,7 +9,7 @@ const createTeacher = async (req, res, next) => {
     if (req.file) {
       newTeacherData.file = req.file; // ส่งทั้ง object ไป model
     }
-    const newTeacher = await teacherService.createTeacher(newTeacherData);
+    const newTeacher = await teacherService.createTeacher(newTeacherData,userActionId);
     res.status(201).json({
       success: true,
       message: 'created successfully',
@@ -22,7 +23,9 @@ const createTeacher = async (req, res, next) => {
 const getAllTeachers = async (req, res, next) => {
   try {
     const status = req.query.status || null;
-    const teachers = await teacherService.getAllTeachers(status);
+    const page = Number(req.query.page) || null;
+    const limit = Number(req.query.limit) || null;
+    const teachers = await teacherService.getAllTeachers(status,page,limit);
     res.json({
       success: true,
       data: teachers
@@ -62,6 +65,7 @@ const getTeacherById = async (req, res, next) => {
 };
 
 const updateTeacher = async (req, res, next) => {
+  const userActionId = req.middlewareUser.id;
   try {
     const id = parseInt(req.params.id);
 
@@ -78,7 +82,7 @@ const updateTeacher = async (req, res, next) => {
       updateTeacher.file = req.file; // ส่งทั้ง object ไป model
     }
 
-    const teachers = await teacherService.updateTeacher(id, updateTeacher);
+    const teachers = await teacherService.updateTeacher(id, updateTeacher,userActionId);
 
     res.json({
       success: true,

@@ -3,6 +3,7 @@ const router = express.Router();
 const multer = require('multer');
 const path = require('path');
 const { validate } = require('../../middlewares/validate.middleware');
+const auth = require("../../middlewares/auth.middleware");
 const { createTeacherSchema, updateTeacherSchema } = require('./teacher.schema');
 const {
   getAllTeachers,
@@ -29,8 +30,8 @@ const upload = multer({ storage });
 // Routes
 router.get('/',getAllTeachers);
 router.get('/:id', getTeacherById);
-router.post('/', upload.single('photo'), validate(createTeacherSchema), createTeacher);
-router.put('/:id', upload.single('photo'), validate(updateTeacherSchema), updateTeacher);
+router.post('/', upload.single('photo'), validate(createTeacherSchema),auth, createTeacher);
+router.put('/:id', upload.single('photo'), validate(updateTeacherSchema),auth, updateTeacher);
 router.delete('/:id', deleteTeacher);
 router.get('/photo/:id', getTeacherPhoto);
 module.exports = router;

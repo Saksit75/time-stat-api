@@ -5,10 +5,14 @@ const {
   getStudentById,
   updateStudent,
   deleteStudent,
-  getStudentByClassLevelId
+  getStudentByClassLevelId,
+  getSomeStudents,
+  upClassLevel,
+  updateStudentNumber
 } = require('./student.controller');
 const { validate } = require('../../middlewares/validate.middleware')
 const { createStudentSchema, updateStudentSchema } = require('./student.schema');
+const auth = require("../../middlewares/auth.middleware");
 const multer = require('multer');
 
 const router = express.Router();
@@ -26,10 +30,12 @@ const storage = multer.diskStorage({
 const upload = multer({ storage });
 // ใช้ validate middleware
 router.get('/', getAllStudents);
+router.get('/some', getSomeStudents);
 router.get('/:id', getStudentById);
-router.post('/', upload.single('photo'), validate(createStudentSchema),  createStudent);
-router.put('/:id', upload.single('photo'), validate(updateStudentSchema), updateStudent);
+router.post('/', upload.single('photo'), validate(createStudentSchema),auth,  createStudent);
+router.put('/:id', upload.single('photo'), validate(updateStudentSchema),auth, updateStudent);
 router.delete('/:id', deleteStudent);
 router.get('/class-level/:id', getStudentByClassLevelId);
-
+router.post('/up-level',auth, upClassLevel); 
+router.post('/update-student-number',auth, updateStudentNumber); 
 module.exports = router;

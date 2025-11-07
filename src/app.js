@@ -12,6 +12,8 @@ const nameTitleRoutes = require('./modules/name_title/name_title.routes');
 const classLevelRoutes = require('./modules/class_level/class_level.routes');
 const statRoutes = require('./modules/time-stat/stat.routes');
 const  slidingJWT  = require('./middlewares/jwtSliding.middleware');
+const timeStatReportSum = require('./modules/time-stat/stat_report_sum.router');
+const timeStatReportStu = require('./modules/time-stat/stat_report_stu.router')
 const app = express();
 
 // Middleware
@@ -33,7 +35,9 @@ app.use('/login', loginRoutes);
 app.use('/logout', logoutRoutes);
 app.use('/name-title', nameTitleRoutes);
 app.use('/class-level', classLevelRoutes);
-app.use('/time-stat', statRoutes);
+app.use('/time-stat', statRoutes) //web
+app.use('/time-stat-report', timeStatReportSum); //export
+app.use('/time-stat-report', timeStatReportStu); //export
 
 app.get('/', (req, res) => {
   res.send('Welcome to Time stat API!');

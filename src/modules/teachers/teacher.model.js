@@ -2,14 +2,48 @@ const { PrismaClient } = require("../../generated/prisma");
 const prisma = new PrismaClient();
 const argon2 = require("argon2"); // ✅ เพิ่มการ import
 
-const getAllTeachers = async (status = null) => {
-  return await prisma.teacher.findMany({
-    where: status ? { status } : {}, // ถ้ามี status จะ filter ถ้าไม่มีจะดึงทั้งหมด
+const getAllTeachers = async (status = null,page=null,limit=null) => {
+  const whereClause = {};
+  if (status !== null) {
+    whereClause.status = status;
+  }
+  const pageNum = page ? Number(page) : null;
+  const limitNum = limit ? Number(limit) : null;
+  const queryOptions = {
+    where: whereClause,
+    orderBy: [
+      {status:"asc"},
+      { id: "desc" },
+    ],
     include: {
       title_relation: true,
       class_level_relation: true,
     },
-  });
+  };
+  if (pageNum && limitNum) {
+    queryOptions.skip = (pageNum - 1) * limitNum;
+    queryOptions.take = limitNum;
+  }
+  const teachers = await prisma.teacher.findMany(queryOptions);
+  if (pageNum && limitNum) {
+    const total = await prisma.teacher.count({ where: whereClause });
+    const totalPages = Math.ceil(total / limitNum);
+    return {
+      teachers,
+      total,
+      totalPages,
+      currentPage: pageNum,
+      limit: limitNum,
+    };
+  } else {
+    return {
+      teachers,
+      total: teachers.length,
+      totalPages: 1,
+      currentPage: 1,
+      limit: teachers.length,
+    };
+  }
 };
 
 const getTeacherById = async (id) => {
@@ -19,7 +53,7 @@ const getTeacherById = async (id) => {
   });
 };
 
-const createTeacher = async (data) => {
+const createTeacher = async (data, userActionId) => {
   try {
     if (data.password && !data.username) {
       throw new Error("หากมีรหัสผ่าน ต้องระบุชื่อผู้ใช้ด้วย");
@@ -59,6 +93,8 @@ const createTeacher = async (data) => {
       class_level: data.class_level || undefined,
       title: data.title || undefined,
       photo: data.photo || undefined,
+      create_by: userActionId,
+      update_by: userActionId,
     };
     delete prismaData.file;
 
@@ -72,7 +108,7 @@ const createTeacher = async (data) => {
   }
 };
 
-const updateTeacher = async (id, data) => {
+const updateTeacher = async (id, data, userActionId) => {
   try {
     if (data.password && !data.username) {
       throw new Error("หากมีรหัสผ่าน ต้องระบุชื่อผู้ใช้ด้วย");
@@ -115,15 +151,14 @@ const updateTeacher = async (id, data) => {
       class_level: data.class_level || undefined,
       title: data.title || undefined,
       photo: data.photo || undefined,
+      update_by: userActionId,
+      update_date: new Date(),
     };
     delete prismaData.file;
 
     const result = await prisma.teacher.update({ where: { id }, data: prismaData });
     return result;
   } catch (err) {
-    // if (err.code === "P2002") {
-    //   throw new Error("ชื่อผู้ใช้ซ้ำในฐานข้อมูล");
-    // }
     throw err;
   }
 };

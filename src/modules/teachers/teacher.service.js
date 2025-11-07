@@ -1,15 +1,15 @@
 const argon2 = require('argon2');
 const teacherModel = require('./teacher.model');
 
-const getAllTeachers = async (status) => {
-  return await teacherModel.getAllTeachers(status);
+const getAllTeachers = async (status,page,limit) => {
+  return await teacherModel.getAllTeachers(status,page,limit);
 };
 const getTeacherById = async (id) => {
   return await teacherModel.getTeacherById(id);
 };
 
-const updateTeacher = async (id, data) => {
-  return await teacherModel.updateTeacher(id, data);
+const updateTeacher = async (id, data, userActionId) => {
+  return await teacherModel.updateTeacher(id, data, userActionId);
 }
 
 const deleteTeacher = async (id) => {
@@ -17,17 +17,15 @@ const deleteTeacher = async (id) => {
 }
 
 
-const createTeacher = async (data) => {
+const createTeacher = async (data, userActionId ) => {
   try {
-    console.log('Teacher service - received data:', JSON.stringify(data, null, 2));
-    
     if (data.password) {
       data.password = await argon2.hash(data.password, {
         type: argon2.argon2id,
       });
     }
     
-    const result = await teacherModel.createTeacher(data);
+    const result = await teacherModel.createTeacher(data, userActionId);
     console.log('Teacher service - created successfully:', result);
     return result;
   } catch (error) {
