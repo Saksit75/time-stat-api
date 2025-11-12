@@ -1,8 +1,9 @@
+const { de } = require("zod/locales");
 const { PrismaClient } = require("../../generated/prisma");
 const prisma = new PrismaClient();
-const argon2 = require("argon2"); // ✅ เพิ่มการ import
+const argon2 = require("argon2");
 
-const getAllTeachers = async (status = null,page=null,limit=null) => {
+const getAllTeachers = async (status = null, page = null, limit = null) => {
   const whereClause = {};
   if (status !== null) {
     whereClause.status = status;
@@ -12,7 +13,7 @@ const getAllTeachers = async (status = null,page=null,limit=null) => {
   const queryOptions = {
     where: whereClause,
     orderBy: [
-      {status:"asc"},
+      { status: "asc" },
       { id: "desc" },
     ],
     include: {
@@ -78,11 +79,6 @@ const createTeacher = async (data, userActionId) => {
     }
 
     if (data.title) data.title = parseInt(data.title);
-    if (data.file) {
-      data.photo = data.file.path.replace(/\\/g, '/');
-    }
-
-    // ✅ hash password ถ้ามี
     if (data.password) {
       data.password = await argon2.hash(data.password);
     }
@@ -92,11 +88,14 @@ const createTeacher = async (data, userActionId) => {
       username: data.username || undefined,
       class_level: data.class_level || undefined,
       title: data.title || undefined,
-      photo: data.photo || undefined,
-      create_by: userActionId,
-      update_by: userActionId,
+      photo_id: data.photoPublicId || undefined,
+      photo: data.photoUrl || undefined,
+      create_by: Number(userActionId),
+      update_by: Number(userActionId),
     };
     delete prismaData.file;
+    delete prismaData.photoPublicId;
+    delete prismaData.photoUrl;
 
     const result = await prisma.teacher.create({ data: prismaData });
     return result;
@@ -118,7 +117,7 @@ const updateTeacher = async (id, data, userActionId) => {
       const existingTeacher = await prisma.teacher.findFirst({
         where: {
           username: data.username,
-          NOT: { id: id }, // ✅ ใช้ findFirst + NOT
+          NOT: { id: id },
         },
       });
       if (existingTeacher) {
@@ -136,11 +135,6 @@ const updateTeacher = async (id, data, userActionId) => {
     }
 
     if (data.title) data.title = parseInt(data.title);
-    if (data.file) {
-      data.photo = data.file.path.replace(/\\/g, '/');
-    }
-
-    // ✅ hash password ถ้ามีส่งมา
     if (data.password) {
       data.password = await argon2.hash(data.password);
     }
@@ -150,11 +144,14 @@ const updateTeacher = async (id, data, userActionId) => {
       username: data.username || undefined,
       class_level: data.class_level || undefined,
       title: data.title || undefined,
-      photo: data.photo || undefined,
-      update_by: userActionId,
+      photo_id: data.photoPublicId || undefined,
+      photo: data.photoUrl || undefined,
+      update_by: Number(userActionId),
       update_date: new Date(),
     };
     delete prismaData.file;
+    delete prismaData.photoPublicId;
+    delete prismaData.photoUrl;
 
     const result = await prisma.teacher.update({ where: { id }, data: prismaData });
     return result;

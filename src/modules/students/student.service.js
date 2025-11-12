@@ -1,23 +1,59 @@
 const studentModel = require('./student.model');
+const { uploadImage, deleteImage } = require('../../utils/cloudinary');
 
-const getAllStudents = async (status, class_level,page,limit) => {
-  return await studentModel.getAllStudents(status, class_level,page,limit);
+const getAllStudents = async (status, class_level, page, limit) => {
+  return await studentModel.getAllStudents(status, class_level, page, limit);
 };
 const getStudentById = async (id) => {
   return await studentModel.getStudentById(id);
 };
 
-const updateStudent = async (id, data,userActionId) => {
-  return await studentModel.updateStudent(id, data,userActionId);
+const updateStudent = async (id, data, userActionId) => {
+  try {
+    if (data.file) {
+      const student = await studentModel.getStudentById(id);
+      if (student?.photo_id) {
+        await deleteImage(student.photo_id);
+      }
+      const result = await uploadImage(data.file.buffer, 'students');
+      data.photoUrl = result.secure_url;
+      data.photoPublicId = result.public_id;
+    }
+    return await studentModel.updateStudent(id, data, userActionId);
+  } catch (error) {
+    console.error("Error updateStudent:", error);
+    return { message: "เกิดข้อผิดพลาด", error: error.message };
+  }
 }
+
 
 const deleteStudent = async (id) => {
-  return await studentModel.deleteStudent(id);
+  try {
+    const student = await studentModel.getStudentById(id);
+    if (student?.photo_id) {
+      await deleteImage(student.photo_id);
+    }
+    return await studentModel.deleteStudent(id);
+  } catch (error) {
+    console.error("Error deleteStudent:", error);
+    return { message: "เกิดข้อผิดพลาด", error: error.message };
+  }
 }
 
 
-const createStudent = async (data,userActionId) => {
-  return await studentModel.createStudent(data,userActionId);
+const createStudent = async (data, userActionId) => {
+  try {
+    if (data.file) {
+      const result = await uploadImage(data.file.buffer, 'students');
+      data.photoUrl = result.secure_url;
+      data.photoPublicId = result.public_id;
+    }
+    const result = await studentModel.createStudent(data, userActionId);
+    return result;
+  } catch (error) {
+    console.error("Error createStudent:", error);
+    return { message: "เกิดข้อผิดพลาด", error: error.message };
+  }
 };
 
 const getStudentByClassLevelId = async (class_level) => {
@@ -67,9 +103,9 @@ const upClassLevel = async (sIds) => {
     return { message: "เกิดข้อผิดพลาด", error: error.message };
   }
 };
-const updateStudentNumber = async (students,userActionId) => {
+const updateStudentNumber = async (students, userActionId) => {
   try {
-    const result = await studentModel.updateStudentNumber(students,userActionId);
+    const result = await studentModel.updateStudentNumber(students, userActionId);
     return result;
   } catch (error) {
     console.error("Error updateStudentNumber:", error);
@@ -77,5 +113,5 @@ const updateStudentNumber = async (students,userActionId) => {
   }
 };
 
-module.exports = { createStudent, getAllStudents, getStudentById, updateStudent, deleteStudent, getStudentByClassLevelId, getSomeStudents, upClassLevel, updateStudentNumber  };
+module.exports = { createStudent, getAllStudents, getStudentById, updateStudent, deleteStudent, getStudentByClassLevelId, getSomeStudents, upClassLevel, updateStudentNumber };
 

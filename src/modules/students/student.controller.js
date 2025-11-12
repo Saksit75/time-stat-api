@@ -6,7 +6,7 @@ const createStudent = async (req, res, next) => {
     if (req.file) {
       req.body.file = req.file; // ส่งทั้ง object ไป model
     }
-    const newStudent = await studentService.createStudent(req.body,userActionId);
+    const newStudent = await studentService.createStudent(req.body,Number(userActionId));
     res.status(201).json({
       success: true,
       message: 'created successfully',
@@ -79,7 +79,7 @@ const updateStudent = async (req, res, next) => {
       updateStudent.file = req.file; // ส่งทั้ง object ไป model
     }
 
-    const student = await studentService.updateStudent(id, updateStudent,userActionId);
+    const student = await studentService.updateStudent(id, updateStudent,Number(userActionId));
 
     res.json({
       success: true,

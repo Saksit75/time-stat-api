@@ -23,6 +23,7 @@ model name_title {
 model student {
   id                   Int          @id @default(autoincrement())
   status               String
+  photo_id             String?
   photo                String?
   title                Int
   first_name           String
@@ -47,6 +48,7 @@ model student {
 model teacher {
   id                   Int          @id @default(autoincrement())
   status               String
+  photo_id             String?
   photo                String?
   title                Int
   first_name           String
@@ -72,16 +74,16 @@ model teacher {
 }
 
 model class_level {
-  id             Int         @id @default(autoincrement())
-  class_level_th String
-  class_level_en String?
-  create_by      Int?
-  create_date    DateTime?   @default(now())
-  update_by      Int?
-  update_date    DateTime?   @default(now())
-  students       student[]
-  teachers       teacher[]
-  timeStats      time_stat[]
+  id               Int                @id @default(autoincrement())
+  class_level_th   String
+  class_level_en   String?
+  create_by        Int?
+  create_date      DateTime?          @default(now())
+  update_by        Int?
+  update_date      DateTime?          @default(now())
+  students         student[]
+  teachers         teacher[]
+  timeStats        time_stat[]
   time_stat_detail time_stat_detail[]
 }
 

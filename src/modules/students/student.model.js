@@ -92,24 +92,25 @@ const createStudent = async (data, userActionId) => {
       }
     }
 
-    // แปลงค่าให้เป็น number
     const studentData = {
       ...data,
       title: data.title ? Number(data.title) : undefined,
       class_level: data.class_level ? Number(data.class_level) : undefined,
-      photo: data.file ? data.file.path.replace(/\\/g, '/') : data.photo,
-      create_by: userActionId,
-      update_by: userActionId
+      photo_id: data.photoPublicId || null,
+      photo: data.photoUrl || null,
+      create_by: Number(userActionId),
+      update_by: Number(userActionId)
     };
     delete studentData.file;
+    delete studentData.photoPublicId;
+    delete studentData.photoUrl;
 
-    // สร้าง student จริง
     const result = await prisma.student.create({ data: studentData });
     return result;
 
   } catch (err) {
     console.error(err);
-    throw err; // important: อย่ากลืน error
+    throw err;
   }
 };
 
@@ -166,16 +167,18 @@ const updateStudent = async (id, data, userActionId) => {
       }
     }
 
-    // แปลงค่าให้เป็น number
     const studentData = {
       ...data,
       title: data.title ? Number(data.title) : undefined,
       class_level: data.class_level ? Number(data.class_level) : undefined,
-      photo: data.file ? data.file.path.replace(/\\/g, '/') : data.photo,
-      update_by: userActionId,
+      photo_id: data.photoPublicId || null,
+      photo: data.photoUrl || null,
+      update_by: Number(userActionId),
       update_date: new Date(),
     };
     delete studentData.file;
+    delete studentData.photoPublicId;
+    delete studentData.photoUrl;
 
     // สร้าง student จริง
     const result = await prisma.student.update({ where: { id }, data: studentData });

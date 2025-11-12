@@ -7,9 +7,9 @@ const createTeacher = async (req, res, next) => {
     const newTeacherData = req.body;
 
     if (req.file) {
-      newTeacherData.file = req.file; // ส่งทั้ง object ไป model
+      newTeacherData.file = req.file;
     }
-    const newTeacher = await teacherService.createTeacher(newTeacherData,userActionId);
+    const newTeacher = await teacherService.createTeacher(newTeacherData,Number(userActionId));
     res.status(201).json({
       success: true,
       message: 'created successfully',
@@ -79,7 +79,7 @@ const updateTeacher = async (req, res, next) => {
     const updateTeacher = req.body;
 
     if (req.file) {
-      updateTeacher.file = req.file; // ส่งทั้ง object ไป model
+      updateTeacher.file = req.file;
     }
 
     const teachers = await teacherService.updateTeacher(id, updateTeacher,userActionId);
