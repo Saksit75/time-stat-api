@@ -7,9 +7,9 @@ const userLogin = async (req, res) => {
     // ✅ ตั้ง cookie ที่นี่
     res.cookie('access_token', login.access_token, {
       httpOnly: true,
-      secure: false,      // dev ใช้ HTTP → false
-      sameSite: 'lax',    // ใช้ 'lax' สำหรับ same-origin requests
-      maxAge: 3 * 60 * 60 * 1000, // 3 hours
+      maxAge: 3 * 60 * 60 * 1000, // 3 ชั่วโมง
+      sameSite: 'none',   // cross-site ต้อง none
+      secure: true,       // ต้อง true ถ้าใช้ https
       // path: '/',          // กำหนด path ให้ชัดเจน
     });
 

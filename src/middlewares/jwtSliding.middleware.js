@@ -18,9 +18,9 @@ const slidingJWT = (req, res, next) => {
       );
       res.cookie('access_token', newToken, {
         httpOnly: true,
-        maxAge: 3 * 60 * 60 * 1000,
-        sameSite: 'lax',
-        secure: false,
+        maxAge: 3 * 60 * 60 * 1000, // 3 ชั่วโมง
+        sameSite: 'none',   // cross-site ต้อง none
+        secure: true,       // ต้อง true ถ้าใช้ https
       });
     }
 
