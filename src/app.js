@@ -19,7 +19,7 @@ const timeStatReportStu = require('./modules/time-stat/stat_report_stu.router');
 const  { ORIGIN } = require('./config');
 
 const app = express();
-
+app.set('trust proxy', 1);
 app.use(morgan('dev')); // แสดง log
 app.use(express.json());
 app.use(cookieParser());
