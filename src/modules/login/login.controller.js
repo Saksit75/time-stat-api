@@ -9,7 +9,7 @@ const userLogin = async (req, res) => {
       httpOnly: true,
       maxAge: 3 * 60 * 60 * 1000, // 3 ชั่วโมง
       sameSite: 'none',   // cross-site ต้อง none
-      secure: true,       // ต้อง true ถ้าใช้ https
+      secure: false,       // ต้อง true ถ้าใช้ https
       // path: '/',          // กำหนด path ให้ชัดเจน
     });
 
