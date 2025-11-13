@@ -14,7 +14,7 @@ const uploadImage = (buffer, folder = 'teachers') => {
             {
                 folder,
                 transformation: [
-                    { width: 500, height: 500, crop: 'fill', gravity: 'auto', fetch_format: 'auto', quality: 'auto' }
+                    { width: 500, height: 500, crop: 'limit', gravity: 'auto', fetch_format: 'auto', quality: 'auto' }
                 ]
             },
             (error, result) => {
