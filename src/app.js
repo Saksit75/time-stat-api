@@ -20,11 +20,11 @@ const  { ORIGIN } = require('./config');
 
 const app = express();
 
-app.use(morgan('dev'));
+app.use(morgan('dev')); // แสดง log
 app.use(express.json());
 app.use(cookieParser());
 app.use(cors({
-  origin: ORIGIN,
+  origin: ORIGIN || 'https://time-stat-web.vercel.app',
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization', 'Cookie'],
