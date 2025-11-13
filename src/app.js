@@ -16,6 +16,7 @@ const statRoutes = require('./modules/time-stat/stat.routes');
 const slidingJWT = require('./middlewares/jwtSliding.middleware');
 const timeStatReportSum = require('./modules/time-stat/stat_report_sum.router');
 const timeStatReportStu = require('./modules/time-stat/stat_report_stu.router');
+const  { ORIGIN } = require('./config');
 
 const app = express();
 
@@ -23,8 +24,8 @@ app.use(morgan('dev'));
 app.use(express.json());
 app.use(cookieParser());
 app.use(cors({
-  origin: 'http://localhost:3000',
-  credentials: true, // อนุญาตส่ง cookie
+  origin: ORIGIN,
+  credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization', 'Cookie'],
 }));

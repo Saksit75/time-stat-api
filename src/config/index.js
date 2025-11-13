@@ -6,4 +6,5 @@ module.exports = {
   CLOUDIN_NAME: process.env.CLOUD_NAME || '',
   CLOUDIN_KEY: process.env.API_KEY || '',
   CLOUDIN_SECRET: process.env.API_SECRET || '',
+  ORIGIN: process.env.ORIGIN || 'http://localhost:3000',
 };
