@@ -19,15 +19,26 @@ const timeStatReportStu = require('./modules/time-stat/stat_report_stu.router');
 const  { ORIGIN } = require('./config');
 
 const app = express();
-app.set('trust proxy', 1);
 app.use(morgan('dev')); // แสดง log
 app.use(express.json());
 app.use(cookieParser());
+app.use((req, res, next) => {
+  res.header("Access-Control-Expose-Headers", "Set-Cookie");
+  next();
+});
 app.use(cors({
-  origin: ORIGIN || 'https://time-stat-web.vercel.app',
+    origin: [
+    "http://localhost:3000",
+    "https://time-stat-web.vercel.app"
+  ],
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization', 'Cookie'],
+  allowedHeaders: [
+  'Content-Type',
+  'Authorization',
+  'Cookie',
+  'Set-Cookie'
+]
 }));
 
 

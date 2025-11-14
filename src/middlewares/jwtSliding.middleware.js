@@ -18,8 +18,8 @@ const slidingJWT = (req, res, next) => {
       );
       res.cookie('access_token', newToken, {
         httpOnly: true,
-        secure: true,   
-        sameSite: 'none',      
+        secure: true,
+        sameSite: 'none',
         path: '/',
         maxAge: 3 * 60 * 60 * 1000,
       });
