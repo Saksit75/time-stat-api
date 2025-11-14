@@ -20,7 +20,7 @@ const slidingJWT = (req, res, next) => {
         httpOnly: true,
         secure: true,
         sameSite: 'none',
-        path: '/',
+        // path: '/',
         maxAge: 3 * 60 * 60 * 1000,
       });
     }

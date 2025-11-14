@@ -22,23 +22,13 @@ const app = express();
 app.use(morgan('dev')); // แสดง log
 app.use(express.json());
 app.use(cookieParser());
-app.use((req, res, next) => {
-  res.header("Access-Control-Expose-Headers", "Set-Cookie");
-  next();
-});
-app.use(cors({
+
+app.options('/*', cors({
     origin: [
-    "http://localhost:3000",
-    "https://time-stat-web.vercel.app"
-  ],
-  credentials: true,
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowedHeaders: [
-  'Content-Type',
-  'Authorization',
-  'Cookie',
-  'Set-Cookie'
-]
+        "http://localhost:3000",
+        "https://time-stat-web.vercel.app"
+    ],
+    credentials: true,
 }));
 
 
