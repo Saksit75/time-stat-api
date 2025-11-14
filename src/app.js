@@ -23,7 +23,7 @@ app.use(morgan('dev')); // แสดง log
 app.use(express.json());
 app.use(cookieParser());
 
-app.options('/*', cors({
+app.use(cors({
     origin: [
         "http://localhost:3000",
         "https://time-stat-web.vercel.app"
