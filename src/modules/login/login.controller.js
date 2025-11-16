@@ -2,16 +2,17 @@ const loginService = require('./login.service');
 
 const userLogin = async (req, res) => {
   try {
-    const login = await loginService.userLogin(req.body);
+    const { username, password } = req.body;
+    const login = await loginService.userLogin(username, password);
 
-    res.cookie('access_token', login.access_token, {
-      httpOnly: true,
-      secure: true,
-      sameSite: 'none',
-      // path: '/',
-      maxAge: 3 * 60 * 60 * 1000,
+res.cookie('access_token', login.access_token, {
+  httpOnly: true,
+  secure: true,
+  sameSite: 'none', 
+  path: '/', 
+  maxAge: 3 * 60 * 60 * 1000,
+});
 
-    });
 
     const resLogin = {
       ...login,
